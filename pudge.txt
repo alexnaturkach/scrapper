@@ -1,0 +1,130 @@
+const puppeteer = require('puppeteer')
+
+let index = 0;
+let arr = [
+    'naturkach',
+    'test',
+    'Asia Adams',
+    'Heyaaaaaa',
+    'asdasdasdasda',
+    'Sara Laiton'
+]
+
+const scrape = async () => {
+  const results = []
+      // Launch the browser and open a new blank page
+  const browser = await puppeteer.launch({headless: 'new'});
+  const page = await browser.newPage();
+
+  // Navigate the page to a URL
+  await page.goto('https://nremt.org/verify-credentials');
+
+  await page.waitForSelector('#ProviderSearch')
+  await page.waitForSelector('#provider-search-submit')
+  const kekw = await page.evaluate(async ()=>{
+  const result = await new Promise((resolve) => {
+
+        let index = 0;
+        let arr = [
+            'naturkach',
+            'test',
+            'Asia Adams',
+            'Heyaaaaaa',
+            'asdasdasdasda',
+            'Sara Laiton'
+        ]
+        const results = []
+        setTimeout(()=>{
+          resolve(results)
+        }, 200)
+        const targetNode = document.getElementsByClassName("search-results__summary")[0];
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: true, childList: true, subtree: true };
+        // Callback function to execute when mutations are observed
+        const callback = (mutationList, observer) => {
+            if(index < arr.length) {
+        
+                const targetNode = document.getElementsByClassName("search-results__summary")[0];
+                if(targetNode.innerText.includes('No results')){
+                    user.result = 'failed'
+                }
+                else {
+                    user.result = 'passed'
+                }
+                results.push(user)
+                index++;
+                if(index === arr.length){
+                    resolve(results)
+                }
+                document.getElementById('ProviderSearch').value = String(arr[index]);
+                document.getElementById('provider-search-submit').click();
+            }
+        };
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+        // Start observing the target node for configured mutations
+        observer.observe(targetNode, config);
+        document.getElementById('ProviderSearch').value = String(arr[index]);
+        document.getElementById('provider-search-submit').click();
+        })
+        return result
+        })
+
+        console.log(kekw)
+        return kekw
+
+
+  // arr.forEach(async (name) => {
+  //   //test if needed
+  //   await page.type('#ProviderSearch', name)
+  //   await page.click('#provider-search-submit')
+  //   const targetNode = await page.waitForSelector(".search-results__summary");
+
+  //   console.log(name)
+
+  //   let user = {name:'', result:''}
+  //   user.name = arr[index]
+
+  //   if(await targetNode.evaluate(el => el.textContent.includes('No results'))){
+  //     user.result = 'failed'
+  //   } else {
+  //     user.result = 'passed'
+  //   }
+
+  //   results.push(user)
+
+  //   console.log(user)
+  // })
+
+  // for(let i=0; i < arr.length; i++) {
+  //   await (async () => {
+  //     await page.type('#ProviderSearch', arr[i])
+  //     await page.click('#provider-search-submit')
+  //     await page.waitForFunction('document.querySelector(".search-results__summary")[0].innerText');
+
+  //     const targetNode = await page.waitForSelector(".search-results__summary");
+
+  
+  //     let user = {name:'', result:''}
+  //     user.name = arr[i]
+
+  //     const kekw = await targetNode.evaluate(el => el.textContent)
+  //     console.log(kekw)
+  
+  //     if(await targetNode.evaluate(el => el.textContent.includes('No results'))){
+  //       user.result = 'failed'
+  //     } else {
+  //       user.result = 'passed'
+  //     }
+  
+  //     results.push(user)
+
+  //   })()
+  // }
+
+
+
+
+}
+
+module.exports = scrape
