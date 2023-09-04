@@ -15,16 +15,12 @@ const subtractYears = (date, years) => {
     return date;
   }
 
-// const launch = () => {
-//     const query = createQuery()
-//     window.location.href = '' + query
-// }
-
-
 async function fetchResults() {
     const modal = document.getElementById('modal')
     const query = createQuery()
     modal.style.visibility = 'visible'
+    
+    //update link before deploy
     const response = await fetch(`http://localhost:8083/scrape?${query}`);
     const finalResults = await response.json();
     
