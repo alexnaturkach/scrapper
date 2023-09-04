@@ -17,14 +17,11 @@ const scrape = async (array) => {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
-  await page.setUserAgent(
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
-
-  await page.setViewport({width: 1200, height: 800});
+  await page.setViewport({width: 1300, height: 823});
 
   await page.goto('https://nremt.org/verify-credentials');
 
-  await page.waitForTimeout(10000)
+  // await page.waitForTimeout(10000)
 
   await page.waitForSelector('#provider-search-submit');
 
@@ -43,8 +40,10 @@ const scrape = async (array) => {
             const targetNode = document.getElementsByClassName('search-results__summary')[0];
             if (targetNode.innerText.includes('No results')) {
               user.result = 'failed';
+              user.date = 'N/A'
             } else if(document.getElementsByClassName('search-results__row').length > 1) {
               user.result = 'Multiple results'
+              user.date = 'N/A'
             } else {
               user.result = 'passed';
               user.date = document.getElementsByClassName('search-results__expiration-date')[0].innerText

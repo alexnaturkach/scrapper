@@ -10,6 +10,11 @@ const createQuery = () => {
     return query
 }
 
+const subtractYears = (date, years) => {
+    date.setFullYear(date.getFullYear() - years);
+    return date;
+  }
+
 // const launch = () => {
 //     const query = createQuery()
 //     window.location.href = '' + query
@@ -20,23 +25,32 @@ async function fetchResults() {
     const modal = document.getElementById('modal')
     const query = createQuery()
     modal.style.visibility = 'visible'
-    const response = await fetch(`http://localhost:8086/scrape?${query}`);
+    const response = await fetch(`http://localhost:8083/scrape?${query}`);
     const finalResults = await response.json();
-
-    const rows = [
-        ["name1", "city1", "some other info"],
-        ["name2", "city2", "more info"]
-    ];
     
-    let csvContent = "data:text/csv;charset=utf-8,";
+    let csvContent = "data:text/csv;charset=utf-8,"
+    csvContent += ['Name', 'Result', 'Date'] + "\r\n"
     
     finalResults.content.forEach((username) => {
-        let row = username.join(",");
-        csvContent += row + "\r\n";
+        let newDate
+        const date = new Date(username.date)
+        if(date == 'Invalid Date'){
+            newDate = 'N/A'
+        } else {
+            newDate = subtractYears(date, 3).toDateString()
+        }
+        let row = [username.name, username.result, newDate]
+        csvContent += row + "\r\n"
     });
 
-    var encodedUri = encodeURI(csvContent);
-    window.open(encodedUri);
+    let encodedUri = encodeURI(csvContent);
+
+    let link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "search_results.csv");
+    document.body.appendChild(link); // Required for FF
+
+    link.click(); // This will download the data file named "search_results.csv".
 
     modal.style.visibility = 'hidden'
 
