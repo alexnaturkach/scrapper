@@ -21,8 +21,6 @@ const scrape = async (array) => {
 
   await page.goto('https://nremt.org/verify-credentials');
 
-  // await page.waitForTimeout(10000)
-
   await page.waitForSelector('#provider-search-submit');
 
 
